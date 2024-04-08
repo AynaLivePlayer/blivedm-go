@@ -1,8 +1,8 @@
 package message
 
 import (
-	"github.com/Akegarasu/blivedm-go/pb"
-	"github.com/Akegarasu/blivedm-go/utils"
+	"github.com/AynaLivePlayer/blivedm-go/pb"
+	"github.com/AynaLivePlayer/blivedm-go/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"google.golang.org/protobuf/proto"

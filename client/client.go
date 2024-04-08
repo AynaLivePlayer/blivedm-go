@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Akegarasu/blivedm-go/api"
-	"github.com/Akegarasu/blivedm-go/packet"
+	"github.com/AynaLivePlayer/blivedm-go/api"
+	"github.com/AynaLivePlayer/blivedm-go/packet"
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,6 +29,7 @@ type Client struct {
 	customEventHandlers *customEventHandlers
 	cancel              context.CancelFunc
 	done                <-chan struct{}
+	api                 api.IApi
 }
 
 // NewClient 创建一个新的弹幕 client
@@ -41,6 +42,21 @@ func NewClient(roomID int) *Client {
 		customEventHandlers: &customEventHandlers{},
 		done:                ctx.Done(),
 		cancel:              cancel,
+		api:                 nil,
+	}
+}
+
+// NewClient 创建一个新的弹幕 client
+func NewClientWithApi(roomID int, iApi api.IApi) *Client {
+	ctx, cancel := context.WithCancel(context.Background())
+	return &Client{
+		RoomID:              roomID,
+		retryCount:          0,
+		eventHandlers:       &eventHandlers{},
+		customEventHandlers: &customEventHandlers{},
+		done:                ctx.Done(),
+		cancel:              cancel,
+		api:                 iApi,
 	}
 }
 
@@ -50,12 +66,15 @@ func (c *Client) SetCookie(cookie string) {
 
 // init 初始化 获取真实 RoomID 和 弹幕服务器 host
 func (c *Client) init() error {
+	if c.api == nil {
+		c.api = api.NewDefaultClient(c.Cookie)
+	}
 	if c.Cookie != "" {
 		if !strings.Contains(c.Cookie, "bili_jct") || !strings.Contains(c.Cookie, "SESSDATA") {
 			log.Errorf("cannot found account token")
 			return errors.New("账号未登录")
 		}
-		uid, err := api.GetUid(c.Cookie)
+		uid, err := c.api.GetUid()
 		if err != nil {
 			log.Error(err)
 		}
@@ -66,14 +85,14 @@ func (c *Client) init() error {
 			c.Buvid = result[0][1]
 		}
 	}
-	roomInfo, err := api.GetRoomInfo(c.RoomID)
+	roomInfo, err := c.api.GetRoomInfo(c.RoomID)
 	// 失败降级
 	if err != nil || roomInfo.Code != 0 {
 		log.Errorf("room=%s init GetRoomInfo fialed, %s", c.RoomID, err)
 	}
 	c.RoomID = roomInfo.Data.RoomId
 	if c.host == "" {
-		info, err := api.GetDanmuInfo(c.RoomID, c.Cookie)
+		info, err := c.api.GetDanmuInfo(c.RoomID)
 		if err != nil {
 			c.hostList = []string{"broadcastlv.chat.bilibili.com"}
 		} else {
