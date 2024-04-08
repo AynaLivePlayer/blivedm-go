@@ -95,8 +95,8 @@ func (c *Client) init() error {
 			for _, h := range info.Data.HostList {
 				c.hostList = append(c.hostList, h.Host)
 			}
+			c.token = info.Data.Token
 		}
-		c.token = info.Data.Token
 	}
 	return nil
 }
