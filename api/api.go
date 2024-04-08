@@ -1,8 +1,11 @@
 package api
 
+import (
+	log "github.com/sirupsen/logrus"
+)
+
 type IApi interface {
-	GetUid() (int, error)
-	GetDanmuInfo(roomID int) (*DanmuInfo, error)
+	GetDanmuInfo(roomID int) (int, *DanmuInfo, error)
 	GetRoomInfo(roomID int) (*RoomInfo, error)
 }
 
@@ -10,12 +13,18 @@ type defaultClient struct {
 	cookie string
 }
 
-func (d *defaultClient) GetUid() (int, error) {
-	return GetUid(d.cookie)
-}
-
-func (d *defaultClient) GetDanmuInfo(roomID int) (*DanmuInfo, error) {
-	return GetDanmuInfo(roomID, d.cookie)
+func (d *defaultClient) GetDanmuInfo(roomID int) (int, *DanmuInfo, error) {
+	var uid int = 0
+	var err error
+	if d.cookie != "" {
+		uid, err = GetUid(d.cookie)
+		if err != nil {
+			uid = 0
+			log.Error(err)
+		}
+	}
+	result, err := GetDanmuInfo(roomID, d.cookie)
+	return uid, result, err
 }
 
 func (d *defaultClient) GetRoomInfo(roomID int) (*RoomInfo, error) {

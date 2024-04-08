@@ -74,11 +74,6 @@ func (c *Client) init() error {
 			log.Errorf("cannot found account token")
 			return errors.New("账号未登录")
 		}
-		uid, err := c.api.GetUid()
-		if err != nil {
-			log.Error(err)
-		}
-		c.Uid = uid
 		re := regexp.MustCompile("_uuid=(.+?);")
 		result := re.FindAllStringSubmatch(c.Cookie, -1)
 		if len(result) > 0 {
@@ -92,7 +87,8 @@ func (c *Client) init() error {
 	}
 	c.RoomID = roomInfo.Data.RoomId
 	if c.host == "" {
-		info, err := c.api.GetDanmuInfo(c.RoomID)
+		uid, info, err := c.api.GetDanmuInfo(c.RoomID)
+		c.Uid = uid
 		if err != nil {
 			c.hostList = []string{"broadcastlv.chat.bilibili.com"}
 		} else {
