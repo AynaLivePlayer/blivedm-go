@@ -69,6 +69,13 @@ func (c *Client) SetCookie(cookie string) {
 
 // init 初始化 获取真实 RoomID 和 弹幕服务器 host
 func (c *Client) init() error {
+	// reset loop
+	if c.cancel != nil {
+		c.cancel()
+		ctx, cancel := context.WithCancel(context.Background())
+		c.cancel = cancel
+		c.done = ctx.Done()
+	}
 	if c.api == nil {
 		c.api = api.NewDefaultClient(c.Cookie)
 	}
