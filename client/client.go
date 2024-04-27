@@ -96,6 +96,7 @@ func (c *Client) init() error {
 		log.Errorf("room=%s init GetRoomInfo fialed, %s", c.RoomID, err)
 	}
 	c.RoomID = roomInfo.Data.RoomId
+	// todo: maybe reset token every time. cuz i don't know when it will be expired
 	if c.host == "" {
 		uid, info, err := c.api.GetDanmuInfo(c.RoomID)
 		c.Uid = uid
