@@ -54,6 +54,9 @@ func NewPlainPacket(operation int, body []byte) Packet {
 
 func NewPacketFromBytes(data []byte) Packet {
 	packLen := binary.BigEndian.Uint32(data[0:4])
+	if packLen == 0 {
+		return Packet{ProtocolVersion: 99}
+	}
 	// 校验包长度
 	if int(packLen) != len(data) {
 		log.Error("error packet")
