@@ -46,7 +46,6 @@ func NewClient(roomID int) *Client {
 		cancel:              cancel,
 		lock:                sync.RWMutex{},
 		api:                 nil,
-		lock:                sync.RWMutex{},
 	}
 }
 
