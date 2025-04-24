@@ -74,6 +74,7 @@ func GetDanmuInfo(roomID int, cookie string) (*DanmuInfo, error) {
 	result := &DanmuInfo{}
 	headers := &http.Header{}
 	headers.Set("cookie", cookie)
+	headers.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36")
 	err := GetJsonWithHeader(fmt.Sprintf("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=%d&type=0", roomID), headers, result)
 	if err != nil {
 		return nil, err

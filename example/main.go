@@ -13,7 +13,7 @@ import (
 
 func main() {
 	log.SetLevel(log.DebugLevel)
-	c := client.NewClient(23943357)
+	c := client.NewClient(0)
 	c.SetCookie("")
 	//弹幕事件
 	c.OnDanmaku(func(danmaku *message.Danmaku) {

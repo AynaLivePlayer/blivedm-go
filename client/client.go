@@ -115,6 +115,9 @@ func (c *Client) init() error {
 func (c *Client) connect() error {
 	reqHeader := &http.Header{}
 	reqHeader.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36")
+	if len(c.hostList) == 0 {
+		return errors.New("blivedm-go: no host found when connecting")
+	}
 retry:
 	c.host = c.hostList[c.retryCount%len(c.hostList)]
 	c.retryCount++
