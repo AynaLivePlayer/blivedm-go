@@ -44,6 +44,7 @@ func NewClient(roomID int) *Client {
 		customEventHandlers: &customEventHandlers{},
 		done:                ctx.Done(),
 		cancel:              cancel,
+		lock:                sync.RWMutex{},
 		api:                 nil,
 		lock:                sync.RWMutex{},
 	}
