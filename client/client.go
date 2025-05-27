@@ -93,14 +93,14 @@ func (c *Client) init() error {
 	roomInfo, err := c.api.GetRoomInfo(c.RoomID)
 	// 失败降级
 	if err != nil || roomInfo.Code != 0 {
-		log.Errorf("room=%s init GetRoomInfo fialed, %s", c.RoomID, err)
+		log.Errorf("room=%d init GetRoomInfo fialed, %s", c.RoomID, err)
 	}
 	c.RoomID = roomInfo.Data.RoomId
 	// todo: maybe reset token every time. cuz i don't know when it will be expired
 	if c.host == "" {
 		uid, info, err := c.api.GetDanmuInfo(c.RoomID)
 		c.Uid = uid
-		if err != nil {
+		if err != nil || info.Code != 0 {
 			c.hostList = []string{"broadcastlv.chat.bilibili.com"}
 		} else {
 			for _, h := range info.Data.HostList {
