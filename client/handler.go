@@ -5,6 +5,9 @@ import (
 	"github.com/AynaLivePlayer/blivedm-go/packet"
 	"github.com/AynaLivePlayer/blivedm-go/utils"
 	log "github.com/sirupsen/logrus"
+	"regexp"
+	"runtime/debug"
+	"strings"
 )
 
 var (
